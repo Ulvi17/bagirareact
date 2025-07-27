@@ -6,6 +6,26 @@ declare module '*.svg' {
   export default content;
 }
 
+// External ESM module declarations
+declare module 'https://esm.sh/@vapi-ai/web' {
+  const Vapi: any;
+  export default Vapi;
+}
+
+declare module 'https://cdn.jsdelivr.net/npm/@supabase/supabase-js/+esm' {
+  export function createClient(url: string, key: string): any;
+}
+
+// Global window declarations
+declare global {
+  interface Window {
+    Vapi: any;
+    Supabase: {
+      createClient: (url: string, key: string) => any;
+    };
+  }
+}
+
 export interface ButtonProps {
   variant?: 'primary' | 'secondary';
   children: React.ReactNode;
