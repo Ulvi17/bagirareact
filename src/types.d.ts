@@ -1,5 +1,11 @@
 import React from 'react';
 
+// SVG module declarations
+declare module '*.svg' {
+  const content: string;
+  export default content;
+}
+
 export interface ButtonProps {
   variant?: 'primary' | 'secondary';
   children: React.ReactNode;

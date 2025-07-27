@@ -4,21 +4,21 @@ import clsx from 'clsx';
 const FEATURES = [
   {
     id: 1,
-    title: 'Proof of transfer',
-    desc: 'The consensus mechanism that connects stacks and bitcoin.',
+    title: 'Задержки с ответом ведут к потере клиентов',
+    desc: 'Потенциальные клиенты ожидают немедленного взаимодействия. Задержки означают, что они уходят к вашим конкурентам.',
     icon: <BoltIcon className="w-4 h-4" />,
   },
   {
     id: 2,
-    title: 'Bitcoin to NFTs',
-    desc: 'NFTs in securing bitcoin by encoding on the network.',
+    title: 'Безличный первый контакт не конвертирует',
+    desc: 'Голосовая почта и стандартные колл-центры лишены юридического контекста и не могут эффективно выстроить доверие или квалифицировать лидов.',
     icon: <BoltIcon className="w-4 h-4" />,
     highlighted: true,
   },
   {
     id: 3,
-    title: 'Bitcoin to DeFi',
-    desc: 'Stacks brings DeFi to bitcoin, unlocking over $1 trillion in capital.',
+    title: 'Неэффективные процессы истощают ресурсы',
+    desc: 'Ручная проверка лидов и планирование встреч отнимают ценное время, которое можно было бы потратить на юридическую работу.',
     icon: <BoltIcon className="w-4 h-4" />,
   },
 ];
@@ -30,7 +30,7 @@ export default function FeatureCarousel() {
       className="py-24 flex flex-col items-center gap-16"
     >
       <h2 className="text-4xl lg:text-5xl font-bold text-gray900 text-center">
-        Stacks unleashed <br className="hidden sm:block" /> Bitcoin
+      Решите проблемы привлечения <br className="hidden sm:block" /> клиентов в вашей фирме
       </h2>
 
       {/* card rail */}
@@ -74,7 +74,7 @@ export default function FeatureCarousel() {
                 className={clsx('mt-4 text-sm underline underline-offset-4',
                                 f.highlighted ? 'text-white' : 'text-gray900')}
               >
-                Learn more
+                {/* Learn more */}
               </a>
             </div>
           </article>
@@ -82,9 +82,9 @@ export default function FeatureCarousel() {
       </div>
 
       {/* see‑all link */}
-      <a href="#all-features" className="text-sm underline underline-offset-4">
+      {/* <a href="#all-features" className="text-sm underline underline-offset-4">
         See all features
-      </a>
+      </a> */}
     </section>
   );
 } 

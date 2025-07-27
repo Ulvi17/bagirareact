@@ -52,7 +52,7 @@ const DeveloperSection: React.FC<DeveloperSectionProps> = ({ onJoinClick }) => {
               {/* Phone with Bitcoin app */}
               <div className="relative">
                 <img 
-                  src="/src/assets/phone.svg" 
+                  src="/phone.svg"
                   alt="Phone illustration" 
                   className="h-80 w-auto"
                 />

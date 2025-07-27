@@ -48,7 +48,7 @@ const Header: React.FC<HeaderProps> = ({ onJoinClick }) => {
       </div>
       {/* left logo */}
       <span className="absolute left-8 top-[30px] text-accent font-semibold">
-        Bagira AI
+        {/* Bagira AI */}
       </span>
     </header>
   );
