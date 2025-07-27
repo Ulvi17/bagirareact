@@ -51,7 +51,7 @@ const Metrics: React.FC = () => {
               <div className="relative w-full h-0 pb-[56.25%]"> {/* 16:9 aspect ratio */}
                 <iframe
                   className="absolute top-0 left-0 w-full h-full"
-                  src="https://www.youtube.com/embed/YhX_Woa3kVA?rel=0&showinfo=0&modestbranding=1"
+                  src="https://youtu.be/4dS_mAogd1s"
                   title="YouTube video"
                   frameBorder="0"
                   allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
