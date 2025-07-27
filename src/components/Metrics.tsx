@@ -1,4 +1,4 @@
-import React, { useRef } from 'react';
+import { useRef } from 'react';
 import Button from './Button';
 import { useScrollReveal } from '../hooks/useScrollReveal';
 

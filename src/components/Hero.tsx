@@ -1,4 +1,4 @@
-import React, { useRef } from 'react';
+import { useRef } from 'react';
 import { useScrollReveal } from '../hooks/useScrollReveal';
 
 interface HeroProps {
