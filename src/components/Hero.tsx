@@ -1,5 +1,6 @@
 import { useRef } from 'react';
 import { useScrollReveal } from '../hooks/useScrollReveal';
+import { BoltIcon, CalendarDaysIcon, ClockIcon } from '@heroicons/react/24/solid';
 
 interface HeroProps {
   onJoinClick: () => void;
@@ -8,6 +9,21 @@ interface HeroProps {
 const Hero: React.FC<HeroProps> = ({ onJoinClick }) => {
   const ref = useRef<HTMLDivElement>(null);
   useScrollReveal(ref);
+
+  const features = [
+    {
+      text: 'Мгновенная квалификация лидов',
+      icon: <BoltIcon className="w-4 h-4 sm:w-6 sm:h-6 text-warn" />
+    },
+    {
+      text: 'Автоматическая запись на консультацию',
+      icon: <CalendarDaysIcon className="w-4 h-4 sm:w-6 sm:h-6 text-warn" />
+    },
+    {
+      text: 'Работа 24/7 без перерывов',
+      icon: <ClockIcon className="w-4 h-4 sm:w-6 sm:h-6 text-warn" />
+    }
+  ];
 
   return (
     <section
@@ -40,11 +56,7 @@ const Hero: React.FC<HeroProps> = ({ onJoinClick }) => {
       <div className="mt-16 sm:mt-20 lg:mt-24 w-full">
         <div className="flex gap-4 sm:gap-6 overflow-x-auto snap-x snap-mandatory scrollbar-hide
                         px-4 sm:px-6 lg:px-0 pb-4 justify-center lg:justify-center">
-          {[
-            'Мгновенная квалификация лидов',
-            'Автоматическая запись на консультацию', 
-            'Работа 24/7 без перерывов'
-          ].map((text, idx) => (
+          {features.map((feature, idx) => (
             <div 
               key={idx}
               className="snap-start shrink-0 flex items-center gap-3
@@ -52,8 +64,8 @@ const Hero: React.FC<HeroProps> = ({ onJoinClick }) => {
                          text-white/90 text-xs sm:text-sm font-medium
                          min-w-max border border-gray-700/50"
             >
-              <span className="w-4 h-4 sm:w-6 sm:h-6 rounded-full bg-warn shrink-0"></span>
-              <span className="whitespace-nowrap">{text}</span>
+              {feature.icon}
+              <span className="whitespace-nowrap">{feature.text}</span>
             </div>
           ))}
         </div>
