@@ -7,7 +7,6 @@ import TeamSection from './components/TeamSection'
 import DeveloperSection from './components/DeveloperSection'
 import Footer from './components/Footer'
 import JoinModal from './components/JoinModal'
-import BagiraVoiceButton from './components/BagiraVoiceButton'
 
 function App() {
   const [isModalOpen, setIsModalOpen] = useState(false);
@@ -32,7 +31,6 @@ function App() {
       </main>
       <Footer />
       <JoinModal isOpen={isModalOpen} onClose={handleCloseModal} />
-      <BagiraVoiceButton />
     </div>
   )
 }

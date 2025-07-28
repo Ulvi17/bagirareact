@@ -164,7 +164,7 @@ const BagiraVoiceButton: React.FC<BagiraVoiceButtonProps> = ({ className = '' })
       <button
         id="vapi-button"
         onClick={handleButtonClick}
-        className={`fixed bottom-6 right-6 w-16 h-16 bg-[#b1976b] rounded-full border-0 outline-0 
+        className={`fixed bottom-6 right-6 w-16 h-16 bg-black rounded-full border-0 outline-0 
                    flex items-center justify-center cursor-pointer z-[9999] transition-transform duration-200
                    hover:scale-110 hover:-translate-y-1
                    ${isLoading ? 'pointer-events-none opacity-60' : ''}
@@ -210,7 +210,7 @@ const BagiraVoiceButton: React.FC<BagiraVoiceButtonProps> = ({ className = '' })
                 onChange={handleInputChange}
                 required
                 placeholder="Name"
-                className="w-full p-3 rounded-md border border-gray-300 text-sm focus:border-[#b1976b] focus:outline-none focus:ring-2 focus:ring-[#b1976b]/30"
+                className="w-full p-3 rounded-md border border-gray-300 text-sm focus:border-black focus:outline-none focus:ring-2 focus:ring-black/30"
               />
               <input
                 type="tel"
@@ -219,7 +219,7 @@ const BagiraVoiceButton: React.FC<BagiraVoiceButtonProps> = ({ className = '' })
                 onChange={handleInputChange}
                 required
                 placeholder="Phone (+xxx)"
-                className="w-full p-3 rounded-md border border-gray-300 text-sm focus:border-[#b1976b] focus:outline-none focus:ring-2 focus:ring-[#b1976b]/30"
+                className="w-full p-3 rounded-md border border-gray-300 text-sm focus:border-black focus:outline-none focus:ring-2 focus:ring-black/30"
               />
               <input
                 type="email"
@@ -228,12 +228,12 @@ const BagiraVoiceButton: React.FC<BagiraVoiceButtonProps> = ({ className = '' })
                 onChange={handleInputChange}
                 required
                 placeholder="you@example.com"
-                className="w-full p-3 rounded-md border border-gray-300 text-sm focus:border-[#b1976b] focus:outline-none focus:ring-2 focus:ring-[#b1976b]/30"
+                className="w-full p-3 rounded-md border border-gray-300 text-sm focus:border-black focus:outline-none focus:ring-2 focus:ring-black/30"
               />
               <button
                 type="submit"
                 disabled={isSubmitting || !callId}
-                className="w-full p-3 bg-[#b1976b] text-white font-semibold rounded-md border-none cursor-pointer transition-colors duration-150 hover:bg-[#c8a97a] disabled:bg-gray-500 disabled:cursor-not-allowed"
+                className="w-full p-3 bg-black text-white font-semibold rounded-md border-none cursor-pointer transition-colors duration-150 hover:bg-gray-800 disabled:bg-gray-500 disabled:cursor-not-allowed"
               >
                 {isSubmitting ? 'Sending…' : 'Submit'}
               </button>
