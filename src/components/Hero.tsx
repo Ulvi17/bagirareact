@@ -1,4 +1,5 @@
 import { useRef } from 'react';
+import { useTranslation } from 'react-i18next';
 import { useScrollReveal } from '../hooks/useScrollReveal';
 import { BoltIcon, CalendarDaysIcon, ClockIcon } from '@heroicons/react/24/solid';
 
@@ -8,19 +9,20 @@ interface HeroProps {
 
 const Hero: React.FC<HeroProps> = ({ onJoinClick }) => {
   const ref = useRef<HTMLDivElement>(null);
+  const { t } = useTranslation();
   useScrollReveal(ref);
 
   const features = [
     {
-      text: 'Мгновенная квалификация лидов',
+      text: t('features.instant'),
       icon: <BoltIcon className="w-4 h-4 sm:w-6 sm:h-6 text-warn" />
     },
     {
-      text: 'Автоматическая запись на консультацию',
+      text: t('features.booking'),
       icon: <CalendarDaysIcon className="w-4 h-4 sm:w-6 sm:h-6 text-warn" />
     },
     {
-      text: 'Работа 24/7 без перерывов',
+      text: t('features.workflow'),
       icon: <ClockIcon className="w-4 h-4 sm:w-6 sm:h-6 text-warn" />
     }
   ];
@@ -36,11 +38,11 @@ const Hero: React.FC<HeroProps> = ({ onJoinClick }) => {
         className="font-bold text-white leading-tight
                    [font-size:clamp(2.375rem,6vw,6rem)]"
       >
-        Bagira AI<br />юрист для ваших клиентов
+        {t('hero.title')}<br />юрист для ваших клиентов
       </h1>
 
       <p className="mt-4 sm:mt-6 max-w-xl text-gray500 text-base sm:text-lg px-4">
-        Bagira AI — это AI-ассистент, который помогает вам автоматизировать процессы квалификация лидов, запись на консультацию и работа 24/7 без перерывов.
+        {t('hero.description')}
       </p>
 
       <button
@@ -49,7 +51,7 @@ const Hero: React.FC<HeroProps> = ({ onJoinClick }) => {
                    bg-accent hover:bg-accentDark transition
                    h-12 sm:h-14 px-6 sm:px-10 rounded-full text-white font-medium text-sm sm:text-base"
       >
-        Присоединиться к пилотной программе
+        {t('hero.cta')}
       </button>
 
       {/* Ecosystem news chips */}
@@ -74,4 +76,4 @@ const Hero: React.FC<HeroProps> = ({ onJoinClick }) => {
   );
 };
 
-export default Hero; 
+export default Hero;

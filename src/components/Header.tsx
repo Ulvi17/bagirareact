@@ -1,3 +1,5 @@
+// import LanguageSwitcher from './LanguageSwitcher';
+
 interface HeaderProps {
   onJoinClick: () => void;
 }
@@ -50,8 +52,12 @@ const Header: React.FC<HeaderProps> = ({ onJoinClick }) => {
       <span className="absolute left-8 top-[30px] text-accent font-semibold">
         {/* Bagira AI */}
       </span>
+      {/* right language switcher - temporarily hidden */}
+      {/* <div className="absolute right-8 top-[30px]">
+        <LanguageSwitcher />
+      </div> */}
     </header>
   );
 };
 
-export default Header; 
+export default Header;

@@ -1,4 +1,5 @@
 import { useRef, useState, useEffect } from 'react';
+import { useTranslation } from 'react-i18next';
 import Button from './Button';
 import { useScrollReveal } from '../hooks/useScrollReveal';
 import { MicrophoneIcon, PhoneIcon } from '@heroicons/react/24/solid';
@@ -18,6 +19,7 @@ interface DeveloperSectionProps {
 }
 
 const DeveloperSection: React.FC<DeveloperSectionProps> = ({ onJoinClick }) => {
+  const { t } = useTranslation();
   const sectionRef = useRef<HTMLDivElement>(null);
   const [isLoading, setIsLoading] = useState(false);
   const [isActive, setIsActive] = useState(false);
@@ -206,7 +208,7 @@ const DeveloperSection: React.FC<DeveloperSectionProps> = ({ onJoinClick }) => {
               className="text-base sm:text-lg px-6 sm:px-8 py-3 sm:py-4"
               onClick={onJoinClick}
             >
-              Присоединиться к пилотной программе
+              {t('demo.cta')}
             </Button>
           </div>
 

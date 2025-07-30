@@ -1,0 +1,22 @@
+{
+  "hero": {
+    "title": "Bagira AI",
+    "subtitle": "AI Assistant for Legal Professionals",
+    "description": "Bagira AI is an AI assistant that helps you automate lead qualification, consultation booking, and work 24/7 without breaks.",
+    "cta": "Join Pilot Program"
+  },
+  "features": {
+    "instant": "Instant Lead Qualification",
+    "booking": "Automatic Consultation Booking", 
+    "workflow": "24/7 Work Without Breaks"
+  },
+  "demo": {
+    "title": "Bagira AI",
+    "subtitle": "Try it yourself",
+    "description": "Learn how Bagira AI interacts with potential clients. Click on the phone and book a consultation.",
+    "cta": "Join Pilot Program"
+  },
+  "footer": {
+    "copyright": "© 2024 Bagira AI. All rights reserved."
+  }
+}
