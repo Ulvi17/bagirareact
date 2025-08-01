@@ -1,4 +1,4 @@
-import { BoltIcon } from '@heroicons/react/24/solid';
+import { ClockIcon, PhoneIcon, CogIcon } from '@heroicons/react/24/solid';
 import clsx from 'clsx';
 
 const FEATURES = [
@@ -6,20 +6,20 @@ const FEATURES = [
     id: 1,
     title: 'Задержки с ответом ведут к потере клиентов',
     desc: 'Потенциальные клиенты ожидают немедленного взаимодействия. Задержки означают, что они уходят к вашим конкурентам.',
-    icon: <BoltIcon className="w-4 h-4" />,
+    icon: <ClockIcon className="w-4 h-4" />,
   },
   {
     id: 2,
     title: 'Безличный первый контакт не конвертирует',
     desc: 'Голосовая почта и стандартные колл-центры лишены юридического контекста и не могут эффективно выстроить доверие или квалифицировать лидов.',
-    icon: <BoltIcon className="w-4 h-4" />,
+    icon: <PhoneIcon className="w-4 h-4" />,
     highlighted: true,
   },
   {
     id: 3,
     title: 'Неэффективные процессы истощают ресурсы',
     desc: 'Ручная проверка лидов и планирование встреч отнимают ценное время, которое можно было бы потратить на юридическую работу.',
-    icon: <BoltIcon className="w-4 h-4" />,
+    icon: <CogIcon className="w-4 h-4" />,
   },
 ];
 
