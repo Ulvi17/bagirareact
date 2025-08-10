@@ -10,6 +10,42 @@ let globalSupabaseInstance: any = null;
 let isInitializing = false;
 let initPromise: Promise<void> | null = null;
 
+// Preload critical resources immediately
+const preloadResources = () => {
+  // Preload VAPI script with high priority
+  if (!document.querySelector('script[data-vapi-preload]')) {
+    const vapiPreload = document.createElement('link');
+    vapiPreload.rel = 'preload';
+    vapiPreload.as = 'script';
+    vapiPreload.href = 'https://esm.sh/@vapi-ai/web';
+    vapiPreload.setAttribute('data-vapi-preload', 'true');
+    document.head.appendChild(vapiPreload);
+  }
+
+  // Preload Supabase with high priority
+  if (!document.querySelector('script[data-supabase-preload]')) {
+    const supabasePreload = document.createElement('link');
+    supabasePreload.rel = 'preload';
+    supabasePreload.as = 'script';
+    supabasePreload.href = 'https://cdn.jsdelivr.net/npm/@supabase/supabase-js/+esm';
+    supabasePreload.setAttribute('data-supabase-preload', 'true');
+    document.head.appendChild(supabasePreload);
+  }
+
+  // Preload FontAwesome
+  if (!document.querySelector('script[data-fontawesome-preload]')) {
+    const faPreload = document.createElement('link');
+    faPreload.rel = 'preload';
+    faPreload.as = 'script';
+    faPreload.href = 'https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/js/all.min.js';
+    faPreload.setAttribute('data-fontawesome-preload', 'true');
+    document.head.appendChild(faPreload);
+  }
+};
+
+// Start preloading immediately when module loads
+preloadResources();
+
 const BagiraVoiceButton: React.FC<BagiraVoiceButtonProps> = ({ className = '' }) => {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
@@ -26,7 +62,7 @@ const BagiraVoiceButton: React.FC<BagiraVoiceButtonProps> = ({ className = '' })
   const vapiRef = useRef<any>(null);
   const supabaseRef = useRef<any>(null);
 
-  // Initialize VAPI once globally
+  // Ultra-fast VAPI initialization with parallel loading
   const initializeVapi = async (): Promise<void> => {
     if (globalVapiInstance && globalSupabaseInstance) {
       return Promise.resolve();
@@ -42,7 +78,7 @@ const BagiraVoiceButton: React.FC<BagiraVoiceButtonProps> = ({ className = '' })
           if (globalVapiInstance && globalSupabaseInstance) {
             resolve();
           } else {
-            setTimeout(checkReady, 100);
+            setTimeout(checkReady, 25); // Even faster checking
           }
         };
         checkReady();
@@ -52,15 +88,30 @@ const BagiraVoiceButton: React.FC<BagiraVoiceButtonProps> = ({ className = '' })
     isInitializing = true;
     initPromise = new Promise(async (resolve, reject) => {
       try {
+        // Parallel resource loading for maximum speed
+        const loadPromises = [];
+
         // Load FontAwesome if not already loaded
         if (!document.querySelector('script[src*="font-awesome"]')) {
           const fontAwesomeScript = document.createElement('script');
           fontAwesomeScript.src = 'https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/js/all.min.js';
           fontAwesomeScript.defer = true;
           document.head.appendChild(fontAwesomeScript);
+          
+          // Wait for FontAwesome to load
+          loadPromises.push(new Promise<void>((resolveFA) => {
+            const checkFA = () => {
+              if (document.querySelector('script[src*="font-awesome"]')?.getAttribute('data-loaded')) {
+                resolveFA();
+              } else {
+                setTimeout(checkFA, 10);
+              }
+            };
+            checkFA();
+          }));
         }
 
-        // Load Vapi and Supabase scripts if not already loaded
+        // Load Vapi and Supabase scripts with parallel execution
         if (!window.Vapi || !window.Supabase) {
           const vapiScript = document.createElement('script');
           vapiScript.type = 'module';
@@ -70,27 +121,35 @@ const BagiraVoiceButton: React.FC<BagiraVoiceButtonProps> = ({ className = '' })
             
             window.Vapi = Vapi;
             window.Supabase = { createClient };
+            
+            // Mark as loaded for faster checking
+            document.querySelector('script[data-vapi-script]')?.setAttribute('data-loaded', 'true');
           `;
+          vapiScript.setAttribute('data-vapi-script', 'true');
           document.head.appendChild(vapiScript);
 
-          // Wait for scripts to load with a more responsive approach
-          await new Promise<void>((resolveScripts) => {
+          // Wait for scripts to load with ultra-responsive checking
+          loadPromises.push(new Promise<void>((resolveScripts) => {
             const checkScripts = () => {
               if (window.Vapi && window.Supabase) {
                 resolveScripts();
               } else {
-                setTimeout(checkScripts, 50); // Check every 50ms instead of waiting 1 second
+                setTimeout(checkScripts, 10); // Check every 10ms for maximum responsiveness
               }
             };
             checkScripts();
-          });
+          }));
         }
+
+        // Wait for all resources to load in parallel
+        await Promise.all(loadPromises);
 
         const VAPI_PUBLIC_KEY = "58f89212-0e94-4123-8f9e-3bc0dde56fe0";
         const SUPABASE_URL = "https://wirwojaiknnvtpzaxzjv.supabase.co";
         const SUPABASE_ANON = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6IndpcndvamFpa25udnRwemF4emp2Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTA5NjE3ODcsImV4cCI6MjA2NjUzNzc4N30.XyhklppW2bvJQ7qFv4SWaDaGK_M_YoGFAiOIFo2tW1c";
         const CHANNEL = "bagheera:new-call";
 
+        // Create instances immediately
         globalVapiInstance = new window.Vapi(VAPI_PUBLIC_KEY);
         globalSupabaseInstance = window.Supabase.createClient(SUPABASE_URL, SUPABASE_ANON);
 
