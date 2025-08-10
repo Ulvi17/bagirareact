@@ -1,6 +1,27 @@
 <svg width="120" height="200" viewBox="0 0 120 200" fill="none" xmlns="http://www.w3.org/2000/svg">
-  <rect x="10" y="10" width="100" height="180" rx="20" fill="#1A1A1A"/>
-  <rect x="20" y="30" width="80" height="140" rx="8" fill="#635BFF"/>
-  <rect x="50" y="15" width="20" height="4" rx="2" fill="#8C94A3"/>
-  <circle cx="60" cy="180" r="8" fill="#8C94A3"/>
+  <!-- iPhone 15 body -->
+  <rect x="15" y="5" width="90" height="190" rx="25" fill="#1A1A1A" stroke="#333" stroke-width="2"/>
+  
+  <!-- iPhone 15 screen -->
+  <rect x="20" y="15" width="80" height="160" rx="20" fill="#635BFF"/>
+  
+  <!-- Dynamic Island (iPhone 15 Pro style) -->
+  <rect x="45" y="20" width="30" height="8" rx="4" fill="#1A1A1A"/>
+  
+  <!-- Dynamic Island details -->
+  <circle cx="52" cy="24" r="1.5" fill="#8C94A3"/>
+  <circle cx="68" cy="24" r="1.5" fill="#8C94A3"/>
+  
+  <!-- Home indicator -->
+  <rect x="50" y="170" width="20" height="1" rx="0.5" fill="#8C94A3"/>
+  
+  <!-- Action Button (iPhone 15 Pro) -->
+  <rect x="103" y="40" width="2" height="15" rx="1" fill="#333"/>
+  
+  <!-- Volume buttons -->
+  <rect x="103" y="70" width="2" height="8" rx="1" fill="#333"/>
+  <rect x="103" y="85" width="2" height="8" rx="1" fill="#333"/>
+  
+  <!-- Side button -->
+  <rect x="15" y="65" width="2" height="15" rx="1" fill="#333"/>
 </svg> 

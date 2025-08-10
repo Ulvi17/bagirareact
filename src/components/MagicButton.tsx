@@ -14,19 +14,6 @@ const MagicButton: React.FC<MagicButtonProps> = ({ children, onClick, className 
   const pathRef = useRef<SVGPathElement>(null);
   const [pathLength, setPathLength] = useState(0);
   const [buttonDimensions, setButtonDimensions] = useState({ width: 0, height: 0 });
-  const [particles, setParticles] = useState<Array<{ id: number; x: number; y: number; vx: number; vy: number }>>([]);
-
-  useEffect(() => {
-    // Generate particles
-    const newParticles = Array.from({ length: 20 }, (_, i) => ({
-      id: i,
-      x: Math.random() * 100,
-      y: Math.random() * 100,
-      vx: (Math.random() - 0.5) * 2,
-      vy: (Math.random() - 0.5) * 2,
-    }));
-    setParticles(newParticles);
-  }, []);
 
   useEffect(() => {
     // Get button dimensions and calculate path
@@ -44,22 +31,6 @@ const MagicButton: React.FC<MagicButtonProps> = ({ children, onClick, className 
     }
   }, [buttonDimensions]);
 
-  useEffect(() => {
-    if (!isHovered) return;
-
-    const interval = setInterval(() => {
-      setParticles(prev => prev.map(particle => ({
-        ...particle,
-        x: particle.x + particle.vx,
-        y: particle.y + particle.vy,
-        vx: particle.x < 0 || particle.x > 100 ? -particle.vx : particle.vx,
-        vy: particle.y < 0 || particle.y > 100 ? -particle.vy : particle.vy,
-      })));
-    }, 50);
-
-    return () => clearInterval(interval);
-  }, [isHovered]);
-
   const handleMouseMove = (e: React.MouseEvent<HTMLButtonElement>) => {
     if (!buttonRef.current) return;
     
@@ -73,15 +44,16 @@ const MagicButton: React.FC<MagicButtonProps> = ({ children, onClick, className 
   const handleMouseEnter = () => setIsHovered(true);
   const handleMouseLeave = () => setIsHovered(false);
 
-  // Generate path based on button dimensions
+  // Generate path based on button dimensions with exact rounded borders
   const generatePath = () => {
     const { width, height } = buttonDimensions;
     if (width === 0 || height === 0) return '';
     
     const radius = height / 2;
     const strokeWidth = 3;
-    const offset = strokeWidth / 2; // Center the stroke on the border
+    const offset = strokeWidth / 2;
     
+    // Create a path that follows the exact rounded rectangle border
     return `M ${radius + offset} ${offset} 
             L ${width - radius - offset} ${offset} 
             A ${radius} ${radius} 0 0 1 ${width - offset} ${radius + offset} 
@@ -90,7 +62,7 @@ const MagicButton: React.FC<MagicButtonProps> = ({ children, onClick, className 
             L ${radius + offset} ${height - offset} 
             A ${radius} ${radius} 0 0 1 ${offset} ${height - radius - offset} 
             L ${offset} ${radius + offset} 
-            A ${radius} ${radius} 0 0 1 ${radius + offset} ${offset} Z`;
+            A ${radius} ${radius} 0 0 1 ${radius + offset} ${offset}`;
   };
 
   return (
@@ -170,28 +142,10 @@ const MagicButton: React.FC<MagicButtonProps> = ({ children, onClick, className 
             transition={{ 
               duration: 4, 
               repeat: Infinity, 
-              ease: "linear", 
-              times: [0, 0.15, 0.35, 0.6, 1] 
+              ease: "linear"
             }}
           />
         </svg>
-      )}
-
-      {/* Animated particles */}
-      {isHovered && (
-        <div className="absolute inset-0 pointer-events-none">
-          {particles.map(particle => (
-            <div
-              key={particle.id}
-              className="absolute w-1 h-1 bg-white/30 rounded-full animate-pulse"
-              style={{
-                left: `${particle.x}%`,
-                top: `${particle.y}%`,
-                animationDelay: `${particle.id * 0.1}s`,
-              }}
-            />
-          ))}
-        </div>
       )}
 
       {/* Magnetic glow effect */}
