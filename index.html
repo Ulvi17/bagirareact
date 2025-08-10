@@ -19,10 +19,9 @@
     <link rel="dns-prefetch" href="https://cdn.jsdelivr.net">
     <link rel="dns-prefetch" href="https://cdnjs.cloudflare.com">
     
-    <!-- High-priority preloads for critical resources -->
-    <link rel="preload" href="https://esm.sh/@vapi-ai/web" as="script" crossorigin>
-    <link rel="preload" href="https://cdn.jsdelivr.net/npm/@supabase/supabase-js/+esm" as="script" crossorigin>
-    <link rel="preload" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/js/all.min.js" as="script" crossorigin>
+    <!-- High-priority preloads for critical resources with proper CORS -->
+    <link rel="preload" href="https://esm.sh/@vapi-ai/web" as="script" crossorigin="anonymous">
+    <link rel="preload" href="https://cdn.jsdelivr.net/npm/@supabase/supabase-js/+esm" as="script" crossorigin="anonymous">
     
     <!-- Prefetch additional domains that might be needed -->
     <link rel="preconnect" href="https://wirwojaiknnvtpzaxzjv.supabase.co">

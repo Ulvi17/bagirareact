@@ -2,8 +2,7 @@
 const CACHE_NAME = 'bagira-vapi-v1';
 const VAPI_RESOURCES = [
   'https://esm.sh/@vapi-ai/web',
-  'https://cdn.jsdelivr.net/npm/@supabase/supabase-js/+esm',
-  'https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/js/all.min.js'
+  'https://cdn.jsdelivr.net/npm/@supabase/supabase-js/+esm'
 ];
 
 // Install event - cache VAPI resources

@@ -19,6 +19,7 @@ const preloadResources = () => {
     vapiPreload.as = 'script';
     vapiPreload.href = 'https://esm.sh/@vapi-ai/web';
     vapiPreload.setAttribute('data-vapi-preload', 'true');
+    vapiPreload.crossOrigin = 'anonymous';
     document.head.appendChild(vapiPreload);
   }
 
@@ -29,18 +30,11 @@ const preloadResources = () => {
     supabasePreload.as = 'script';
     supabasePreload.href = 'https://cdn.jsdelivr.net/npm/@supabase/supabase-js/+esm';
     supabasePreload.setAttribute('data-supabase-preload', 'true');
+    supabasePreload.crossOrigin = 'anonymous';
     document.head.appendChild(supabasePreload);
   }
 
-  // Preload FontAwesome
-  if (!document.querySelector('script[data-fontawesome-preload]')) {
-    const faPreload = document.createElement('link');
-    faPreload.rel = 'preload';
-    faPreload.as = 'script';
-    faPreload.href = 'https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/js/all.min.js';
-    faPreload.setAttribute('data-fontawesome-preload', 'true');
-    document.head.appendChild(faPreload);
-  }
+  // Don't preload FontAwesome - load it on-demand to avoid CORS issues
 };
 
 // Start preloading immediately when module loads
@@ -91,20 +85,28 @@ const BagiraVoiceButton: React.FC<BagiraVoiceButtonProps> = ({ className = '' })
         // Parallel resource loading for maximum speed
         const loadPromises = [];
 
-        // Load FontAwesome if not already loaded
+        // Load FontAwesome if not already loaded (on-demand to avoid CORS issues)
         if (!document.querySelector('script[src*="font-awesome"]')) {
           const fontAwesomeScript = document.createElement('script');
           fontAwesomeScript.src = 'https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/js/all.min.js';
           fontAwesomeScript.defer = true;
+          fontAwesomeScript.crossOrigin = 'anonymous';
           document.head.appendChild(fontAwesomeScript);
           
-          // Wait for FontAwesome to load
+          // Wait for FontAwesome to load with timeout
           loadPromises.push(new Promise<void>((resolveFA) => {
+            let attempts = 0;
+            const maxAttempts = 50; // 500ms timeout
+            
             const checkFA = () => {
-              if (document.querySelector('script[src*="font-awesome"]')?.getAttribute('data-loaded')) {
+              attempts++;
+              if ((window as any).FontAwesome || document.querySelector('script[src*="font-awesome"]')?.getAttribute('data-loaded')) {
                 resolveFA();
-              } else {
+              } else if (attempts < maxAttempts) {
                 setTimeout(checkFA, 10);
+              } else {
+                console.warn('⚠️ FontAwesome loading timeout, continuing without it');
+                resolveFA(); // Continue anyway
               }
             };
             checkFA();
@@ -149,9 +151,29 @@ const BagiraVoiceButton: React.FC<BagiraVoiceButtonProps> = ({ className = '' })
         const SUPABASE_ANON = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6IndpcndvamFpa25udnRwemF4emp2Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTA5NjE3ODcsImV4cCI6MjA2NjUzNzc4N30.XyhklppW2bvJQ7qFv4SWaDaGK_M_YoGFAiOIFo2tW1c";
         const CHANNEL = "bagheera:new-call";
 
-        // Create instances immediately
-        globalVapiInstance = new window.Vapi(VAPI_PUBLIC_KEY);
-        globalSupabaseInstance = window.Supabase.createClient(SUPABASE_URL, SUPABASE_ANON);
+        // Create instances immediately with error handling
+        try {
+          globalVapiInstance = new window.Vapi(VAPI_PUBLIC_KEY);
+          
+          // Handle Krisp filter errors gracefully
+          globalVapiInstance.on('error', (error: any) => {
+            if (error?.message?.includes('Krisp') || error?.message?.includes('mic processor')) {
+              console.warn('⚠️ Audio processing issue detected, continuing with basic functionality');
+              // Continue without advanced audio processing
+            }
+          });
+          
+        } catch (error) {
+          console.error('❌ Failed to create VAPI instance:', error);
+          throw error;
+        }
+        
+        try {
+          globalSupabaseInstance = window.Supabase.createClient(SUPABASE_URL, SUPABASE_ANON);
+        } catch (error) {
+          console.error('❌ Failed to create Supabase instance:', error);
+          throw error;
+        }
 
         // Set up Vapi event listeners
         globalVapiInstance.on('call-start', (call: any) => {
