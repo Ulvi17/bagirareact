@@ -4,11 +4,18 @@ interface BagiraVoiceButtonProps {
   className?: string;
 }
 
+// Global VAPI instance to avoid re-initialization
+let globalVapiInstance: any = null;
+let globalSupabaseInstance: any = null;
+let isInitializing = false;
+let initPromise: Promise<void> | null = null;
+
 const BagiraVoiceButton: React.FC<BagiraVoiceButtonProps> = ({ className = '' }) => {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
   const [isActive, setIsActive] = useState(false);
   const [callId, setCallId] = useState('');
+  const [isVapiReady, setIsVapiReady] = useState(false);
   const [formData, setFormData] = useState({
     name: '',
     phone: '',
@@ -19,90 +26,139 @@ const BagiraVoiceButton: React.FC<BagiraVoiceButtonProps> = ({ className = '' })
   const vapiRef = useRef<any>(null);
   const supabaseRef = useRef<any>(null);
 
-  useEffect(() => {
-    // Load FontAwesome
-    const fontAwesomeScript = document.createElement('script');
-    fontAwesomeScript.src = 'https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/js/all.min.js';
-    fontAwesomeScript.defer = true;
-    document.head.appendChild(fontAwesomeScript);
+  // Initialize VAPI once globally
+  const initializeVapi = async (): Promise<void> => {
+    if (globalVapiInstance && globalSupabaseInstance) {
+      return Promise.resolve();
+    }
 
-    // Load Vapi and Supabase scripts
-    const loadScripts = async () => {
-      try {
-        // Load Vapi script
-        const vapiScript = document.createElement('script');
-        vapiScript.type = 'module';
-        vapiScript.innerHTML = `
-          import Vapi from "https://esm.sh/@vapi-ai/web";
-          import { createClient } from "https://cdn.jsdelivr.net/npm/@supabase/supabase-js/+esm";
-          
-          window.Vapi = Vapi;
-          window.Supabase = { createClient };
-        `;
-        document.head.appendChild(vapiScript);
+    if (isInitializing && initPromise) {
+      return initPromise;
+    }
 
-        // Wait for scripts to load
-        setTimeout(() => {
-          if (window.Vapi && window.Supabase) {
-            const VAPI_PUBLIC_KEY = "58f89212-0e94-4123-8f9e-3bc0dde56fe0";
-            const SUPABASE_URL = "https://wirwojaiknnvtpzaxzjv.supabase.co";
-            const SUPABASE_ANON = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6IndpcndvamFpa25udnRwemF4emp2Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTA5NjE3ODcsImV4cCI6MjA2NjUzNzc4N30.XyhklppW2bvJQ7qFv4SWaDaGK_M_YoGFAiOIFo2tW1c";
-            const CHANNEL = "bagheera:new-call";
-
-            vapiRef.current = new window.Vapi(VAPI_PUBLIC_KEY);
-            supabaseRef.current = window.Supabase.createClient(SUPABASE_URL, SUPABASE_ANON);
-
-            // Set up Vapi event listeners
-            vapiRef.current.on('call-start', (call: any) => {
-              setIsActive(true);
-              setIsLoading(false);
-              if (call && (call.id || call.callId)) {
-                setCallId(call.id || call.callId);
-              }
-            });
-
-            vapiRef.current.on('call-end', () => {
-              setIsActive(false);
-              setIsLoading(false);
-            });
-
-            vapiRef.current.on('error', () => {
-              setIsActive(false);
-              setIsLoading(false);
-            });
-
-            vapiRef.current.on('message', (msg: any) => {
-              const TRIGGER_PHRASE = "please type your phone number below to confirm.";
-              if (msg.type === 'transcript' && 
-                  msg.role === 'assistant' && 
-                  msg.transcriptType === 'final' && 
-                  msg.transcript?.toLowerCase().includes(TRIGGER_PHRASE)) {
-                setIsModalOpen(true);
-              }
-            });
-
-            // Set up Supabase Realtime
-            supabaseRef.current.channel(CHANNEL)
-              .on('broadcast', { event: 'call-created' }, ({ payload }: any) => {
-                setCallId(payload.callId);
-                console.log('🔔 callId via RT:', payload.callId);
-              })
-              .subscribe((s: string) => {
-                if (s === 'SUBSCRIBED') console.log('✅ Supabase listener active');
-              });
+    if (isInitializing) {
+      return new Promise((resolve) => {
+        const checkReady = () => {
+          if (globalVapiInstance && globalSupabaseInstance) {
+            resolve();
+          } else {
+            setTimeout(checkReady, 100);
           }
-        }, 1000);
+        };
+        checkReady();
+      });
+    }
 
+    isInitializing = true;
+    initPromise = new Promise(async (resolve, reject) => {
+      try {
+        // Load FontAwesome if not already loaded
+        if (!document.querySelector('script[src*="font-awesome"]')) {
+          const fontAwesomeScript = document.createElement('script');
+          fontAwesomeScript.src = 'https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/js/all.min.js';
+          fontAwesomeScript.defer = true;
+          document.head.appendChild(fontAwesomeScript);
+        }
+
+        // Load Vapi and Supabase scripts if not already loaded
+        if (!window.Vapi || !window.Supabase) {
+          const vapiScript = document.createElement('script');
+          vapiScript.type = 'module';
+          vapiScript.innerHTML = `
+            import Vapi from "https://esm.sh/@vapi-ai/web";
+            import { createClient } from "https://cdn.jsdelivr.net/npm/@supabase/supabase-js/+esm";
+            
+            window.Vapi = Vapi;
+            window.Supabase = { createClient };
+          `;
+          document.head.appendChild(vapiScript);
+
+          // Wait for scripts to load with a more responsive approach
+          await new Promise<void>((resolveScripts) => {
+            const checkScripts = () => {
+              if (window.Vapi && window.Supabase) {
+                resolveScripts();
+              } else {
+                setTimeout(checkScripts, 50); // Check every 50ms instead of waiting 1 second
+              }
+            };
+            checkScripts();
+          });
+        }
+
+        const VAPI_PUBLIC_KEY = "58f89212-0e94-4123-8f9e-3bc0dde56fe0";
+        const SUPABASE_URL = "https://wirwojaiknnvtpzaxzjv.supabase.co";
+        const SUPABASE_ANON = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6IndpcndvamFpa25udnRwemF4emp2Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTA5NjE3ODcsImV4cCI6MjA2NjUzNzc4N30.XyhklppW2bvJQ7qFv4SWaDaGK_M_YoGFAiOIFo2tW1c";
+        const CHANNEL = "bagheera:new-call";
+
+        globalVapiInstance = new window.Vapi(VAPI_PUBLIC_KEY);
+        globalSupabaseInstance = window.Supabase.createClient(SUPABASE_URL, SUPABASE_ANON);
+
+        // Set up Vapi event listeners
+        globalVapiInstance.on('call-start', (call: any) => {
+          setIsActive(true);
+          setIsLoading(false);
+          if (call && (call.id || call.callId)) {
+            setCallId(call.id || call.callId);
+          }
+        });
+
+        globalVapiInstance.on('call-end', () => {
+          setIsActive(false);
+          setIsLoading(false);
+        });
+
+        globalVapiInstance.on('error', () => {
+          setIsActive(false);
+          setIsLoading(false);
+        });
+
+        globalVapiInstance.on('message', (msg: any) => {
+          const TRIGGER_PHRASE = "please type your phone number below to confirm.";
+          if (msg.type === 'transcript' && 
+              msg.role === 'assistant' && 
+              msg.transcriptType === 'final' && 
+              msg.transcript?.toLowerCase().includes(TRIGGER_PHRASE)) {
+            setIsModalOpen(true);
+          }
+        });
+
+        // Set up Supabase Realtime
+        globalSupabaseInstance.channel(CHANNEL)
+          .on('broadcast', { event: 'call-created' }, ({ payload }: any) => {
+            setCallId(payload.callId);
+            console.log('🔔 callId via RT:', payload.callId);
+          })
+          .subscribe((s: string) => {
+            if (s === 'SUBSCRIBED') console.log('✅ Supabase listener active');
+          });
+
+        resolve();
       } catch (error) {
         console.error('Failed to load dependencies:', error);
+        reject(error);
+      } finally {
+        isInitializing = false;
       }
-    };
+    });
 
-    loadScripts();
+    return initPromise;
+  };
+
+  useEffect(() => {
+    // Start VAPI initialization immediately when component mounts
+    initializeVapi().then(() => {
+      vapiRef.current = globalVapiInstance;
+      supabaseRef.current = globalSupabaseInstance;
+      setIsVapiReady(true);
+      console.log('🚀 VAPI initialized successfully');
+    }).catch((error) => {
+      console.error('❌ VAPI initialization failed:', error);
+    });
   }, []);
 
   const handleButtonClick = async () => {
-    if (isLoading) return;
+    if (isLoading || !isVapiReady) return;
     if (isActive) {
       setIsLoading(true);
       vapiRef.current?.stop();
@@ -164,27 +220,34 @@ const BagiraVoiceButton: React.FC<BagiraVoiceButtonProps> = ({ className = '' })
       <button
         id="vapi-button"
         onClick={handleButtonClick}
-        className={`fixed bottom-6 right-6 w-16 h-16 bg-black rounded-full border-0 outline-0 
-                   flex items-center justify-center cursor-pointer z-[9999] transition-transform duration-200
-                   hover:scale-110 hover:-translate-y-1
+        disabled={!isVapiReady}
+        className={`fixed bottom-6 right-6 w-16 h-16 rounded-full border-0 outline-0 
+                   flex items-center justify-center cursor-pointer z-[9999] transition-all duration-200
+                   ${!isVapiReady ? 'bg-gray-500 cursor-not-allowed opacity-50' : 'bg-black hover:scale-110 hover:-translate-y-1'}
                    ${isLoading ? 'pointer-events-none opacity-60' : ''}
                    ${isActive ? 'bg-[#dc3545]' : ''}
-                   ${isActive || isLoading ? '' : 'animate-float'}
+                   ${isActive || isLoading || !isVapiReady ? '' : 'animate-float'}
                    ${className}`}
-        aria-label="Start voice assistant"
+        aria-label={isVapiReady ? "Start voice assistant" : "Voice assistant initializing..."}
       >
-        <span 
-          className={`absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2
-                     text-xs font-semibold text-white tracking-wider pointer-events-none
-                     ${isActive ? 'hidden' : 'block'}`}
-        >
-          Bagira AI
-        </span>
-        <i 
-          className={`fas fa-phone-slash text-white text-2xl absolute
-                     transition-all duration-200
-                     ${isActive ? 'opacity-100 scale-100' : 'opacity-0 scale-0'}`}
-        />
+        {!isVapiReady ? (
+          <div className="w-6 h-6 border-2 border-white border-t-transparent rounded-full animate-spin" />
+        ) : (
+          <>
+            <span 
+              className={`absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2
+                         text-xs font-semibold text-white tracking-wider pointer-events-none
+                         ${isActive ? 'hidden' : 'block'}`}
+            >
+              Bagira AI
+            </span>
+            <i 
+              className={`fas fa-phone-slash text-white text-2xl absolute
+                         transition-all duration-200
+                         ${isActive ? 'opacity-100 scale-100' : 'opacity-0 scale-0'}`}
+            />
+          </>
+        )}
       </button>
 
       {/* Modal */}
