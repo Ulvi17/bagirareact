@@ -195,12 +195,25 @@ const BagiraVoiceButton: React.FC<BagiraVoiceButtonProps> = ({ className = '' })
         });
 
         globalVapiInstance.on('message', (msg: any) => {
-          const TRIGGER_PHRASE = "please type your phone number below to confirm.";
+          const TRIGGER_PHRASES = [
+            "please type your phone number below to confirm.",
+            "введите, пожалуйста, ниже ваш номер телефона для подтверждения"
+          ];
+          
           if (msg.type === 'transcript' && 
               msg.role === 'assistant' && 
               msg.transcriptType === 'final' && 
-              msg.transcript?.toLowerCase().includes(TRIGGER_PHRASE)) {
-            setIsModalOpen(true);
+              msg.transcript) {
+            
+            const transcript = msg.transcript.toLowerCase();
+            const isTriggered = TRIGGER_PHRASES.some(phrase => 
+              transcript.includes(phrase.toLowerCase())
+            );
+            
+            if (isTriggered) {
+              console.log('🎯 Trigger phrase detected:', msg.transcript);
+              setIsModalOpen(true);
+            }
           }
         });
 
