@@ -175,7 +175,7 @@ const JoinModal: React.FC<JoinModalProps> = ({ isOpen, onClose }) => {
           {/* Submit button */}
           <button
             type="submit"
-            disabled={isSubmitting || (formData.website && !isWebsiteValid(formData.website))}
+            disabled={isSubmitting || Boolean(formData.website && !isWebsiteValid(formData.website))}
             className="w-full bg-accent hover:bg-accentDark text-white font-medium py-3 px-6 rounded-lg transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
           >
             {isSubmitting ? 'Отправляем...' : 'Отправить заявку'}
