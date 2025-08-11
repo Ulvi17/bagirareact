@@ -13,11 +13,34 @@ const JoinModal: React.FC<JoinModalProps> = ({ isOpen, onClose }) => {
   });
   const [isSubmitting, setIsSubmitting] = useState(false);
 
+  // Function to normalize website URL
+  const normalizeWebsite = (website: string): string => {
+    if (!website) return website;
+    
+    // Remove leading/trailing whitespace
+    let normalized = website.trim();
+    
+    // If it doesn't start with http:// or https://, add https://
+    if (!normalized.match(/^https?:\/\//)) {
+      normalized = 'https://' + normalized;
+    }
+    
+    // Ensure it has a valid domain structure
+    if (!normalized.includes('.') || normalized.endsWith('.')) {
+      return website; // Return original if invalid
+    }
+    
+    return normalized;
+  };
+
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setIsSubmitting(true);
 
     try {
+      // Normalize the website URL before sending
+      const normalizedWebsite = normalizeWebsite(formData.website);
+      
       const response = await fetch('https://primary-w2wb-edtechstudio.up.railway.app/webhook/pilot', {
         method: 'POST',
         headers: {
@@ -26,7 +49,7 @@ const JoinModal: React.FC<JoinModalProps> = ({ isOpen, onClose }) => {
         body: JSON.stringify({
           name: formData.name,
           company: formData.company,
-          website: formData.website
+          website: normalizedWebsite
         }),
       });
 
@@ -49,6 +72,15 @@ const JoinModal: React.FC<JoinModalProps> = ({ isOpen, onClose }) => {
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
     setFormData(prev => ({ ...prev, [name]: value }));
+  };
+
+  // Validate website field
+  const isWebsiteValid = (website: string): boolean => {
+    if (!website) return false;
+    
+    // Allow various formats: example.com, www.example.com, https://example.com
+    const websiteRegex = /^(https?:\/\/)?(www\.)?[a-zA-Z0-9][a-zA-Z0-9-]{0,61}[a-zA-Z0-9]\.[a-zA-Z]{2,}(\.[a-zA-Z]{2,})?(\/.*)?$/;
+    return websiteRegex.test(website);
   };
 
   if (!isOpen) return null;
@@ -118,20 +150,32 @@ const JoinModal: React.FC<JoinModalProps> = ({ isOpen, onClose }) => {
               Сайт компании:
             </label>
             <input
-              type="url"
+              type="text"
               name="website"
               value={formData.website}
               onChange={handleInputChange}
-              placeholder="https://www.examplelaw.ru"
-              className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-accent focus:border-accent transition-colors"
+              placeholder="example.com или www.example.com"
+              className={`w-full px-4 py-3 border rounded-lg focus:ring-2 focus:ring-accent focus:border-accent transition-colors ${
+                formData.website && !isWebsiteValid(formData.website)
+                  ? 'border-red-300 focus:ring-red-200 focus:border-red-500'
+                  : 'border-gray-300 focus:ring-accent focus:border-accent'
+              }`}
               required
             />
+            <p className="text-xs text-gray-500 mt-1">
+              Поддерживаются форматы: example.com, www.example.com, https://example.com
+            </p>
+            {formData.website && !isWebsiteValid(formData.website) && (
+              <p className="text-xs text-red-500 mt-1">
+                Пожалуйста, введите корректный адрес сайта
+              </p>
+            )}
           </div>
 
           {/* Submit button */}
           <button
             type="submit"
-            disabled={isSubmitting}
+            disabled={isSubmitting || (formData.website && !isWebsiteValid(formData.website))}
             className="w-full bg-accent hover:bg-accentDark text-white font-medium py-3 px-6 rounded-lg transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
           >
             {isSubmitting ? 'Отправляем...' : 'Отправить заявку'}
