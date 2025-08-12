@@ -197,7 +197,7 @@ const BagiraVoiceButton: React.FC<BagiraVoiceButtonProps> = ({ className = '' })
         globalVapiInstance.on('message', (msg: any) => {
           const TRIGGER_PHRASES = [
             "please type your phone number below to confirm.",
-            "введите, пожалуйста, ниже ваш номер телефона для подтверждения"
+            "введите номер телефона"
           ];
           
           if (msg.type === 'transcript' && 
