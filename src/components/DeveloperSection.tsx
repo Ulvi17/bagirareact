@@ -90,12 +90,34 @@ const DeveloperSection: React.FC<DeveloperSectionProps> = ({ onJoinClick }) => {
             });
 
             vapiRef.current.on('message', (msg: any) => {
-              const TRIGGER_PHRASE = "please type your phone number below to confirm.";
+              const TRIGGER_PHRASES = [
+                "please type your phone number below to confirm.",
+                "введите номер телефона"
+              ];
+              
               if (msg.type === 'transcript' && 
                   msg.role === 'assistant' && 
                   msg.transcriptType === 'final' && 
-                  msg.transcript?.toLowerCase().includes(TRIGGER_PHRASE)) {
-                setIsModalOpen(true);
+                  msg.transcript) {
+                
+                const transcript = msg.transcript.toLowerCase();
+                console.log('🔍 [DeveloperSection] Received transcript:', msg.transcript);
+                console.log('🔍 [DeveloperSection] Role:', msg.role, 'Type:', msg.transcriptType);
+                
+                const isTriggered = TRIGGER_PHRASES.some(phrase => {
+                  const phraseLower = phrase.toLowerCase();
+                  const includes = transcript.includes(phraseLower);
+                  console.log(`🔍 [DeveloperSection] Checking phrase: "${phrase}" -> "${phraseLower}" -> ${includes ? '✅ MATCH!' : '❌ no match'}`);
+                  return includes;
+                });
+                
+                if (isTriggered) {
+                  console.log('🎯 [DeveloperSection] Trigger phrase detected:', msg.transcript);
+                  console.log('🚀 [DeveloperSection] Opening phone number modal...');
+                  setIsModalOpen(true);
+                } else {
+                  console.log('❌ [DeveloperSection] No trigger phrase found in transcript');
+                }
               }
             });
 
