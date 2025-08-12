@@ -206,13 +206,22 @@ const BagiraVoiceButton: React.FC<BagiraVoiceButtonProps> = ({ className = '' })
               msg.transcript) {
             
             const transcript = msg.transcript.toLowerCase();
-            const isTriggered = TRIGGER_PHRASES.some(phrase => 
-              transcript.includes(phrase.toLowerCase())
-            );
+            console.log('🔍 Received transcript:', msg.transcript);
+            console.log('🔍 Role:', msg.role, 'Type:', msg.transcriptType);
+            
+            const isTriggered = TRIGGER_PHRASES.some(phrase => {
+              const phraseLower = phrase.toLowerCase();
+              const includes = transcript.includes(phraseLower);
+              console.log(`🔍 Checking phrase: "${phrase}" -> "${phraseLower}" -> ${includes ? '✅ MATCH!' : '❌ no match'}`);
+              return includes;
+            });
             
             if (isTriggered) {
               console.log('🎯 Trigger phrase detected:', msg.transcript);
+              console.log('🚀 Opening phone number modal...');
               setIsModalOpen(true);
+            } else {
+              console.log('❌ No trigger phrase found in transcript');
             }
           }
         });
@@ -261,7 +270,7 @@ const BagiraVoiceButton: React.FC<BagiraVoiceButtonProps> = ({ className = '' })
     
     setIsLoading(true);
     try {
-      await vapiRef.current?.start(undefined, undefined, "07c34a29-6c47-4f09-8737-7be62bb72de5");
+      await vapiRef.current?.start(undefined, undefined, "e7897c7b-f380-4769-b9bd-8a0c6c31f6c5");
     } catch (err) {
       console.error(err);
       setIsLoading(false);
