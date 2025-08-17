@@ -179,7 +179,7 @@ const DeveloperSection: React.FC<DeveloperSectionProps> = ({ onJoinClick }) => {
         mode: 'no-cors'
       });
       
-      alert('Thank you! We have received your info.');
+              alert('Спасибо! Мы получили вашу информацию.');
       setFormData({ name: '', phone: '', email: '' });
       setCallId('');
       setIsModalOpen(false);
