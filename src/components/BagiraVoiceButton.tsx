@@ -270,7 +270,7 @@ const BagiraVoiceButton: React.FC<BagiraVoiceButtonProps> = ({ className = '' })
     
     setIsLoading(true);
     try {
-      await vapiRef.current?.start(undefined, undefined, "aeb32d67-f606-4e45-8260-9c2c81d27113");
+      await vapiRef.current?.start(undefined, undefined, "1cac2767-09e5-4f26-add2-22cbc71f103b");
     } catch (err) {
       console.error(err);
       setIsLoading(false);
@@ -361,7 +361,7 @@ const BagiraVoiceButton: React.FC<BagiraVoiceButtonProps> = ({ className = '' })
         >
           <div className="bg-[#182a46] p-6 rounded-lg w-90 max-w-md shadow-lg">
             <div className="text-xl font-semibold mb-5 text-center text-white">
-              Confirm your booking
+              Подтвердите вашу заявку
             </div>
             <form onSubmit={handleFormSubmit} className="space-y-3">
               <input
@@ -375,7 +375,7 @@ const BagiraVoiceButton: React.FC<BagiraVoiceButtonProps> = ({ className = '' })
                 value={formData.name}
                 onChange={handleInputChange}
                 required
-                placeholder="Name"
+                placeholder="Имя"
                 className="w-full p-3 rounded-md border border-gray-300 text-sm focus:border-black focus:outline-none focus:ring-2 focus:ring-black/30"
               />
               <input
@@ -384,7 +384,7 @@ const BagiraVoiceButton: React.FC<BagiraVoiceButtonProps> = ({ className = '' })
                 value={formData.phone}
                 onChange={handleInputChange}
                 required
-                placeholder="Phone (+xxx)"
+                placeholder="Телефон (+xxx)"
                 className="w-full p-3 rounded-md border border-gray-300 text-sm focus:border-black focus:outline-none focus:ring-2 focus:ring-black/30"
               />
               <input
@@ -393,7 +393,7 @@ const BagiraVoiceButton: React.FC<BagiraVoiceButtonProps> = ({ className = '' })
                 value={formData.email}
                 onChange={handleInputChange}
                 required
-                placeholder="you@example.com"
+                placeholder="Электронная почта"
                 className="w-full p-3 rounded-md border border-gray-300 text-sm focus:border-black focus:outline-none focus:ring-2 focus:ring-black/30"
               />
               <button
@@ -401,7 +401,7 @@ const BagiraVoiceButton: React.FC<BagiraVoiceButtonProps> = ({ className = '' })
                 disabled={isSubmitting || !callId}
                 className="w-full p-3 bg-black text-white font-semibold rounded-md border-none cursor-pointer transition-colors duration-150 hover:bg-gray-800 disabled:bg-gray-500 disabled:cursor-not-allowed"
               >
-                {isSubmitting ? 'Sending…' : 'Submit'}
+                {isSubmitting ? 'Отправляем...' : 'Отправить'}
               </button>
             </form>
           </div>
