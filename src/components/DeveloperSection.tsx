@@ -151,7 +151,7 @@ const DeveloperSection: React.FC<DeveloperSectionProps> = ({ onJoinClick }) => {
     
     setIsLoading(true);
     try {
-      await vapiRef.current?.start(undefined, undefined, "36f1f2ac-bb5b-4249-a2da-753eeb98f0b4");
+      await vapiRef.current?.start(undefined, undefined, "63ce3c35-96eb-4965-a36c-beafcc92d2b4");
     } catch (err) {
       console.error(err);
       setIsLoading(false);
