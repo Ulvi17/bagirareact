@@ -22,7 +22,7 @@ const Metrics: React.FC = () => {
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="grid lg:grid-cols-2 gap-16 items-center">
           {/* Left Column - Text Content */}
-          <div>
+          <div className="text-center lg:text-left">
             <h2 className="text-4xl lg:text-5xl font-bold text-gray900 mb-6 leading-tight">
               Время менять<br />
               статус-кво<br />
